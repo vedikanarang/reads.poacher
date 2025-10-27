@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Poacher</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Import The Seasons font -->
+  <style>
+    @font-face {
+      font-family: 'The Seasons';
+      src: url('yourfontpath.woff2') format('woff2'),
+           url('yourfontpath.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+    body {
+      margin: 0;
+      background: #fff;
+      color: #111;
+      font-family: 'The Seasons', serif;
+      min-height: 100vh;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      padding: 32px 0 24px 32px;
+      background: #fff;
+      border-bottom: 2px solid #111;
+    }
+    .menu-btn {
+      font-size: 2.5em;
+      background: none;
+      border: none;
+      color: #111;
+      margin-right: 32px;
+      cursor: pointer;
+    }
+    .blog-title {
+      font-family: 'The Seasons', serif;
+      letter-spacing: 2px;
+      margin: 0;
+      font-size: 3em;
+      font-weight: bold;
+      text-transform: uppercase;
+      color: #111;
+    }
+    .blog-subtitle {
+      margin: 8px 0 0 0;
+      font-family: 'The Seasons', serif;
+      font-size: 1.15em;
+      text-transform: uppercase;
+      color: #111;
+      letter-spacing: 1px;
+    }
+    .sidebar {
+      position: fixed;
+      left: -340px;
+      top: 0;
+      width: 320px;
+      height: 100vh;
+      background: #fff;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+      transition: left 0.3s;
+      padding: 40px 32px 32px 32px;
+      color: #111;
+      overflow-y: auto;
+      z-index: 1000;
+    }
+    .sidebar.open {
+      left: 0;
+    }
+    .sidebar h2 {
+      font-family: 'The Seasons', serif;
+      font-size: 1.45em;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .sidebar p, .sidebar li {
+      color: #111;
+      font-size: 1em;
+      margin-bottom: 12px;
+      line-height: 1.45;
+    }
+    .sidebar label {
+      font-weight: bold;
+      display: block;
+      margin-top: 20px;
+      margin-bottom: 6px;
+    }
+    .sidebar input[type="text"],
+    .sidebar input[type="email"],
+    .sidebar textarea {
+      width: 93%;
+      padding: 6px;
+      margin-bottom: 16px;
+      border-radius: 3px;
+      border: 1px solid #111;
+      background: #fff;
+      color: #111;
+      font-family: 'The Seasons', serif;
+    }
+    .sidebar button {
+      background: #111;
+      color: #fff;
+      border: none;
+      padding: 7px 18px;
+      border-radius: 3px;
+      margin-right: 8px;
+      cursor: pointer;
+      font-family: 'The Seasons', serif;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      background: rgba(0,0,0,0.17);
+      z-index: 999;
+      display: none;
+    }
+    .overlay.active {
+      display: block;
+    }
+    .content {
+      padding: 60px 0 0 32px;
+      max-width: 770px;
+      margin: 0 auto 16px 32px; /* shifted right */
+      text-align: left;
+      position: relative;
+    }
+    .article-section {
+      margin-left: 24px; /* shifted article right */
+      margin-top: 46px;
+      margin-bottom: 60px;
+      max-width:560px;
+      padding-right:12px;
+    }
+    .narrative-title {
+      font-family: 'The Seasons', serif;
+      font-size: 1.1em;
+      font-weight: bold;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #444;
+      margin-bottom: 16px;
+    }
+    .intro-box {
+      margin-bottom: 22px;
+      font-size: 1.09em;
+      line-height: 1.7;
+      color: #222;
+      letter-spacing: .7px;
+      margin-right: 15px;
+    }
+    .article-heading {
+      font-family: 'The Seasons', serif;
+      font-size: 1.55em;
+      color: #111;
+      text-transform:capitalize;
+      margin-top:30px;
+      margin-bottom: 11px;
+      font-weight:500;
+      letter-spacing: 1.15px;
+    }
+    .article-meta {
+      font-size: 1em;
+      color: #222;
+      margin-bottom: 4px;
+      margin-left:3px;
+      font-family: 'The Seasons', serif;
+    }
+    .tap-box {
+      margin-top: 32px;
+      margin-bottom: 30px;
+      display: flex;
+      align-items: center;
+    }
+    .popup-box {
+      background: #111;
+      color: #fff;
+      font-family: 'The Seasons', serif;
+      font-size: 1em;
+      text-align: center;
+      padding: 19px 38px;
+      border-radius: 7px;
+      box-shadow: 0 2px 8px rgba(20,20,20,0.07);
+      cursor: pointer;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-weight: 600;
+      transition:background 0.2s;
+      margin-right:8px;
+      border: none;
+    }
+    .full-article {
+      display: none;
+      font-size: 1.1em;
+      line-height: 1.8;
+      letter-spacing: .3px;
+      color: #222;
+      margin-bottom:16px;
+      margin-right: 24px;
+      margin-top: 17px;
+      font-family: 'The Seasons', serif;
+    }
+    .like-impression {
+      display:flex;
+      align-items:center;
+      margin-top:22px;
+      margin-bottom:12px;
+    }
+    .like-btn {
+      background:#111;
+      color:#fff;
+      border:none;
+      border-radius:5px;
+      padding:7px 22px;
+      cursor:pointer;
+      font-family:'The Seasons',serif;
+      margin-right:19px;
+      text-transform:uppercase;
+      font-size: 1em;
+      letter-spacing:.5px;
+      font-weight:500;
+    }
+    .impressions {
+      font-size: .96em;
+      color: #222;
+      font-family:'The Seasons',serif;
+    }
+    .feedback-box {
+      margin-top:30px;
+      margin-bottom:15px;
+      background: #f7f7f7;
+      border-radius:9px;
+      padding:19px 18px;
+      max-width:410px;
+      font-family:'The Seasons',serif;
+      box-shadow:0 2px 22px rgba(20,20,20,0.08);
+    }
+    .feedback-label {
+      font-size:1.08em;
+      margin-bottom:6px;
+      color:#222;
+      font-family:'The Seasons',serif;
+    }
+    .feedback-input {
+      width:94%;
+      padding:8px;
+      margin-bottom:12px;
+      border-radius:3px;
+      border: 1px solid #111;
+      background:#fff;
+      color:#111;
+      font-family: 'The Seasons',serif;
+    }
+    .feedback-submit {
+      background:#111;
+      color:#fff;
+      border-radius:5px;
+      font-family:'The Seasons',serif;
+      padding:7px 18px;
+      border:none;
+      cursor:pointer;
+      text-transform:uppercase;
+      font-size:.95em;
+      letter-spacing:.5px;
+      font-weight:600;
+    }
+    .footer {
+      background: #fff;
+      color: #111;
+      text-align: center;
+      padding: 29px 0 24px 0;
+      border-top: 1.1px solid #222;
+      font-size: 1em;
+      letter-spacing: 0.5px;
+      margin-top:48px;
+    }
+    .created-by {
+      font-size:1em;
+      color:#222;
+      font-family:'The Seasons',serif;
+      text-align:center;
+      margin-top:21px;
+      margin-bottom:3px;
+      letter-spacing:.5px;
+    }
+    .moving-upcoming {
+      position:fixed;
+      top:160px; /* moved lower down */
+      right:-400px;
+      width:330px;
+      background:#111;
+      color:#fff;
+      font-size:1.08em;
+      z-index:2002;
+      padding:19px 23px;
+      border-radius:10px;
+      box-shadow:0 2px 16px rgba(20,20,20,0.11);
+      font-family: 'The Seasons',serif;
+      text-transform:none;
+      opacity:0;
+      transition:right 0.7s, opacity 0.6s;
+    }
+    .moving-upcoming.active {
+      right:35px;
+      opacity:1;
+      transition:right 0.6s, opacity 0.6s;
+    }
+    @media (max-width:700px) {
+      .content {padding: 40px 10px; margin-left:10px;}
+      .blog-title {font-size:2.1em;}
+      .sidebar {width: 90vw;}
+      .moving-upcoming {width:89vw; right:-480px; top:120px;}
+      .moving-upcoming.active {right:7px;}
+      .article-section {margin-left:8px;}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button class="menu-btn" onclick="openSidebar()">&#9776;</button>
+    <div>
+      <h1 class="blog-title">POACHER</h1>
+      <div class="blog-subtitle">WE ARE STORIES WITHIN A CONSTRUCT</div>
+    </div>
+  </header>
+
+  <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+  <aside class="sidebar" id="sidebar">
+    <h2>About</h2>
+    <p>We all grow up listening to stories, I believe we are all stories living amidst a construct.</p>
+    <p>They say people bow down to power and money, I though feel words are the strongest weapons, I have a voice and I use that to reach out to like minded individuals, following the functionalist perspective: all allied parts of our society and practices which in the name of rituals have been going on and are hollowing the structure.</p>
+    <p>Here’s to questioning beliefs to clarity and decide whether to conform or deviate.</p>
+    <p> Keep Reading!<br>~Vedika Narang</p>
+    <hr>
+    <h2>Contact Me</h2>
+    <form action="mailto:vedikanarang101@gmail.com" method="post" enctype="text/plain">
+      <label for="side-name">Name</label>
+      <input type="text" id="side-name" name="name" placeholder="Your Name" required>
+      <label for="side-email">Email</label>
+      <input type="email" id="side-email" name="email" placeholder="Your Email" required>
+      <label for="side-message">Send</label>
+      <textarea id="side-message" name="message" rows="3" placeholder="Write your message..." required></textarea>
+      <button type="submit">Send</button>
+    </form>
+    <hr>
+    <div class="created-by">Created by Vedika Narang</div>
+  </aside>
+
+  <main class="content">
+    <div class="moving-upcoming" id="upcomingBox">
+      Upcoming Read: Stumbles upon the Duality of Purity and the forms it exists in, our Society.<br>
+      It uncovers the nuances of staunch belief systems.
+    </div>
+    <section class="article-section">
+      <div class="narrative-title">Narrative</div>
+      <div class="intro-box">
+        We all are products of our conditioning institutions are part of this, they shape our sense of Equality. The Society, though divides people between two Spectrums- White or Black, Right or Wrong, Conformist or Deviant.<br><br>
+        The Human Race though is far more experienced than to be on extremes.<br><br>
+        “Neither White Nor Black” is an invitation to step outside binaries and question the stories that shape us, In the times where people long for clarity, the path that lies ahead of us perhaps navigates the complex, often grey, spaces where real stories exist.
+      </div>
+      <div class="article-heading" style="margin-top:28px;">
+        Neither White Nor Black
+      </div>
+      <div class="article-meta" style="margin-bottom:4px;">Dated: 26th October 2025</div>
+      <div class="article-meta" style="margin-bottom:23px;">Vedika Narang</div>
+      <div class="tap-box">
+        <button class="popup-box" id="tapReadBtn" onclick="showFullArticle()">TAP HERE FOR FULL READ</button>
+      </div>
+      <div class="full-article" id="fullArticle">
+        Didn’t we all grow up learning that the world is either black or white, right or wrong there is good or bad and that opposites will attract, be it humans or animals and that in turn becomes the nature of the society, thereby making it a convention. Hence, what we see and are made to believe for most of our lives is something we staunchly regard as true and that in turn makes up part of our belief system.<br><br>
+        So for most of the people who are on the right side of “this convention” are deemed as natural and the rest who have chosen a different way are wronged for their existence?<br><br>
+        How does it feel to not be valued for something that is an integral part of us, our identity. That isn’t just difficult- it’s alienating. The “natural” ones out there cannot feel what it feels to be denied of one’s dignity for simply being themselves, to live in a world that will provide you with equity only if your existence is on the lines of it being natural.<br><br>
+        As a kid nobody tells us about masculinity or femineity yet that is so deeply engrained in the society we live in, but for somebody who does not abide by this duality are burdened by the weight of the traditional gender roles and that is where we fail as a society when these roles feel imposed rather than they being natural, where we fail to provide them with a common sense of space and comfort for our own to co-exist.<br><br>
+        We ostracise them to a such an extent that they are made to believe the path except for the conventional, is considered deviant, that it needs to be concealed for the greater good. They are told that they are choosing a lifestyle to prove a point, and that pains all so called “normal people” to death but what goes unnoticed is that they are carving a space for themselves where no right-thinking mind of our society exists, and they are free to live there LITERALLY.<br><br>
+        Blaming other parts of the world for this way of life, doesn’t change the fact that it is people’s fundamental right. For heaven’s sake we come from a religion whose history includes examples of deities who transcend or embody both masculine and feminine forms.<br><br>
+        We forget every time we walk down the path of labelling identities as western, we look down upon our own sacred heritage.<br><br>
+        AdiShakti- isn’t just feminine but a unified source of all creation: she is shiva as much as shakti, these weren’t just some fringe beliefs, Indian mythology is rich with stories that transcend gender(Lord Vishnu took the form of Mohini, Shiva embraced the form of a woman in devotion to his consort and these were revered and adored, they aren’t alien to us it just needs a little polishing.<br><br>
+        Thinking on two lines about this quite literally reminded me of how till the time we have not faced the lack of something (be it a resource, feeling or emotion) we do not understand the value of the very same, which here is a quintessential right? No, it’s a necessity: respect and being valued for who they are in the society they live in.<br><br>
+        We all our stories, we grow up listening to many such stories and otherwise, then we begin to write our own- casting ourselves into moulds created by us defining how our chapters unfold, the best ones break formulas and the ones that challenge the convention by not being a product of it are reminisced. All that seems right isn’t right, and it isn’t just black and white. The choice lies in your hands, choose your side,  the society that coddles this convention or the society that wants to be the destroyer of it.
+      </div>
+      <div class="like-impression">
+        <button class="like-btn" onclick="likeArticle()">Like</button>
+        <span class="impressions"><span id="impressionCount">34</span> Impressions</span>
+        <!-- Impression count can be dynamically updated using backend; here, it's static for demonstration. -->
+      </div>
+      <div class="feedback-box">
+        <form action="mailto:vedikanarang101@gmail.com" method="post" enctype="text/plain">
+          <div class="feedback-label">Let it out, Let me know :)<br>Write, Shape your voice, Vent:</div>
+          <textarea class="feedback-input" name="feedback" rows="3" placeholder="Write your response here..." required></textarea>
+          <input class="feedback-input" type="text" name="name" placeholder="Your Name" required>
+          <input class="feedback-input" type="email" name="email" placeholder="Your Email" required>
+          <button class="feedback-submit" type="submit">Send</button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    &copy; 2025 Poacher — Created by Vedika Narang
+  </footer>
+  <script>
+    // Hamburger menu
+    function openSidebar() {
+      document.getElementById('sidebar').classList.add('open');
+      document.getElementById('overlay').classList.add('active');
+    }
+    function closeSidebar() {
+      document.getElementById('sidebar').classList.remove('open');
+      document.getElementById('overlay').classList.remove('active');
+    }
+    // TAP to show full article
+    function showFullArticle() {
+      document.getElementById('fullArticle').style.display = 'block';
+      document.getElementById('tapReadBtn').style.display = 'none';
+      // Increment impressions on open
+      var cnt = parseInt(document.getElementById('impressionCount').textContent, 10);
+      document.getElementById('impressionCount').textContent = cnt + 1;
+    }
+    // LIKE logic
+    function likeArticle() {
+      document.getElementById('like-btn'); // invoked for demo, connect to backend for tally
+      alert("Thank you for liking this read!");
+    }
+    // Moving upcoming box (appear for 10s, hide for 10s)
+    function showUpcoming() {
+      document.getElementById('upcomingBox').classList.add('active');
+      setTimeout(function() {
+        document.getElementById('upcomingBox').classList.remove('active');
+      }, 10000); // Show for 10 seconds
+    }
+    // Schedule: re-appear every 20 seconds (10 shown, 10 hidden)
+    setInterval(showUpcoming, 20000);
+    // First appear on load
+    window.onload = showUpcoming;
+  </script>
+</body>
+</html>
